@@ -1,2 +1,3 @@
 # sistema-colas
-Un pequeño sistema de colas, para trabajar con websockets
+
+Un pequeño sistema de colas, para trabajar con webSockets

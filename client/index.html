@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente de socket</title>
+</head>
+
+<body>
+    <div>
+        <h1>Cliente de socket</h1>
+        <div>
+            <label for="message">Mensaje</label>
+            <input type="text" id="message">
+            <button id="send">Enviar</button>
+            <button>Ping</button>
+        </div>
+        <div>
+            <label for="messages">Mensajes</label>
+            <textarea id="messages" cols="30" rows="10"></textarea>
+        </div>
+    </div>
+    <script src="./assets/socket.io.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>
