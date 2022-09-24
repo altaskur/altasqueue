@@ -2,17 +2,24 @@ queue = [];
 queueStatus = "idle";
 const defaultTime = 8000;
 
-function checkQue(data) {
-  queue.push(data);
-  console.log("Queue", queue);
-  console.log("New event loaded", data);
-  console.log("Queue status", queueStatus);
-  console.warn(queueStatus);
+function checkQueue() {
+  console.log("------ Start checkQueue --------");
+  console.log("Queue status: ", queueStatus);
+  console.log("------ End checkQueue --------");
+
   if (queueStatus === "idle") {
     return "idle";
   } else {
     return "busy";
   }
+}
+
+function addQueue(data) {
+  console.log("------ Start addQueue --------");
+  console.log("Adding event to queue", data);
+  queue.push(data);
+  console.log("Queue array: ", queue);
+  console.log("------ End addQueue --------");
 }
 
 function checkAnimationTime(data) {
@@ -21,8 +28,7 @@ function checkAnimationTime(data) {
   if (data.time === undefined) {
     time = defaultTime;
   }
-  console.log("Time set to", time);
   return time;
 }
 
-module.exports = { checkQue, checkAnimationTime };
+module.exports = { checkQueue, addQueue, checkAnimationTime };

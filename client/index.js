@@ -8,8 +8,14 @@ let pingButton = document.querySelectorAll("button")[1];
 let textArea = document.querySelector("textarea");
 
 button.addEventListener("click", () => {
-  socket.emit("event", inputMessage.value);
+  let data = {
+    event: "text",
+    data: inputMessage.value,
+  };
+
+  socket.emit("event", data);
 });
+
 pingButton.addEventListener("click", () => {
   socket.emit("ping");
   console.log("Sending ping");
@@ -19,9 +25,9 @@ socket.on("ping", () => {
   console.log("Received pong");
 });
 
-socket.on("event", (data) => {
+socket.on("data", (data) => {
   console.log("Received event", data);
-  textArea.value = data;
+  textArea.value = "Evento: " + data.event + " Datos: " + data.data;
 });
 
 socket.on("animation", (data) => {

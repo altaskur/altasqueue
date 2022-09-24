@@ -1,4 +1,4 @@
-const { checkAnimationTime, checkQue } = require("./queue");
+const { checkAnimationTime, checkQueue, addQueue } = require("./queue");
 
 const httpServer = require("http").createServer();
 const io = require("socket.io")(
@@ -14,52 +14,65 @@ io.on("connection", (client) => {
   client.on("connect", () => {
     console.log("Client connected");
   });
+
   client.on("disconnect", () => {
     console.log("Client disconnected");
   });
 
   client.on("event", (data) => {
-    console.log("Received event", data);
+    console.log("[New event] Received event", data);
 
-    if (checkQue(data) === "idle") {
-      let time = checkAnimationTime(data);
-      processQueue(data, time);
-    } else {
-      console.log("Queue busy");
+    addQueue(data);
+    if (checkQueue(data) === "idle") {
+      processQueue();
     }
-
-    client.on("ping", () => {
-      console.log("Received ping");
-      client.emit("ping", "pong");
-    });
   });
 
-  function processQueue(data, time) {
-    queueStatus = "busy";
-    console.log("Switch status to busy");
-    console.log("Processing event", data);
+  client.on("ping", () => {
+    console.log("Received ping");
+    client.emit("ping", "pong");
+  });
 
-    client.emit("event", data);
+  function processQueue() {
+    queueStatus = "busy";
+    console.log("------ Start processQueue --------");
+    console.log("[Status] Switch status to busy");
+
+    let actualEvent = queue.shift();
+    let time = checkAnimationTime(actualEvent);
+    actualEvent.time = time;
+
+    console.log("[Event] Processing event", actualEvent);
+    console.log("[Time] Time set to", time);
+
+    console.log("[ Sending ] Sending data to client", actualEvent);
+    console.log("[ Sending ] Sending animation start to client");
+
+    client.emit("data", actualEvent);
     client.emit("animation", "start");
 
-    console.log("Sent event", data);
-    console.log("Sent animation start");
+    console.log("[Delay] Delaying", time, "ms");
 
     setTimeout(() => {
+      console.log("[ Delay Finished ] Delay finished");
+      console.log("[ Sending ] Sending animation end to client");
       client.emit("animation", "end");
-      queue.shift();
-      queueStatus = "idle";
 
-      console.log("Sent animation end");
-      console.log("set queue to: ", queueStatus);
-      console.log("Queue array: ", queue);
+      queueStatus = "idle";
+      console.log("[Status] Switch status to idle ", queueStatus);
 
       if (queue.length > 0) {
-        processQueue(queue[0], client);
+        console.log(
+          " [ Queue ] Queue not empty, processing next event ",
+          queue[0]
+        );
+        processQueue();
       } else {
-        console.log("Queue empty");
+        console.log(" [ Queue ] Queue empty");
       }
-    }, time);
+    }, actualEvent.time);
+
+    console.log("---- End processQueue ----");
   }
 });
 module.exports = io;
